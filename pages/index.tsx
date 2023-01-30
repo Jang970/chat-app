@@ -1,6 +1,7 @@
 import Head from "next/head";
-import { auth, googleProvider } from "../firebase_library/firebase";
+import { auth, googleProvider, db } from "../firebase_library/firebase";
 import { useEffect, useState } from "react";
+import ChatRoom from "@/components/ChatRoom";
 
 export default function Home() {
   // setting up auto checking if user is logged in or not
@@ -55,6 +56,7 @@ export default function Home() {
                 Sign Out
               </button>
             </nav>
+            <ChatRoom database={db} user={user} />
           </>
         ) : (
           <>
