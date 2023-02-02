@@ -64,7 +64,7 @@ export default function ChatRoom({ database, user }: ChatRoomProps) {
     <main className="flex flex-col p-7 bg-neutral-700 gap-5 h-full w-full overflow-hidden items-center">
       <button
         onClick={handleScroll}
-        className="bg-slate-500 w-1/12 h-8 font-bold rounded-md hover:bg-slate-600"
+        className="bg-slate-500 w-1/2 sm:w-1/6 h-8 font-bold rounded-md hover:bg-slate-600"
       >
         To Bottom
       </button>
@@ -78,18 +78,24 @@ export default function ChatRoom({ database, user }: ChatRoomProps) {
             className={
               message.uid === uid
                 ? "bg-blue-900 rounded-full rounded-bl-none py-3 px-7"
-                : "bg-neutral-800 rounded-full rounded-br-none italic py-3 px-7"
+                : "bg-neutral-800 rounded-full rounded-br-none py-3 px-7"
             }
           >
             <section className="flex flex-col grow">
               {message.displayName ? (
-                <span className="font-bold">{message.displayName}</span>
+                <span
+                  className={
+                    message.uid === uid ? "font-bold" : "font-bold italic"
+                  }
+                >
+                  {message.displayName}
+                </span>
               ) : null}
 
               <div className="flex mt-0.5">
                 <p className="grow text-base flex-wrap"> {message.text}</p>
                 {message.createdAt?.seconds ? (
-                  <span className="text-xs italic">
+                  <span className="hidden md:block text-xs italic">
                     {formatRelative(
                       new Date(message.createdAt.seconds * 1000),
                       new Date()
@@ -111,15 +117,15 @@ export default function ChatRoom({ database, user }: ChatRoomProps) {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Message friends..."
-          className="w-11/12 px-2 rounded-lg text-black"
+          className="w-9/12 md:w-10/12 lg:w-11/12 px-2 rounded-lg text-black"
         />
         <button
           type="submit"
           disabled={!newMessage}
           className={
             newMessage
-              ? "grow py-0.5 bg-blue-600 hover:bg-blue-700"
-              : "grow py-0.5 bg-gray-400"
+              ? "grow py-0.5 bg-blue-600 hover:bg-blue-700 rounded-md"
+              : "grow py-0.5 bg-gray-400 rounded-md"
           }
         >
           Send
