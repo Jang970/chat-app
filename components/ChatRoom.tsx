@@ -30,7 +30,10 @@ export default function ChatRoom({ database, user }: ChatRoomProps) {
       });
   }, [db]);
 
-  const dummySpace = useRef<HTMLDivElement | null>(null);
+  // const dummySpace = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLUListElement | null>(null);
+
+  listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,44 +47,81 @@ export default function ChatRoom({ database, user }: ChatRoomProps) {
 
     setNewMessage("");
 
-    // scroll down
-    dummySpace.current?.scrollIntoView({ behavior: "smooth" });
+    const id = setInterval(() => {
+      listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+      clearInterval(id);
+    }, 150);
+
+    // // scroll down
+    // dummySpace.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleScroll = () => {
+    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <main>
-      <ul>
+    <main className="flex flex-col p-7 bg-neutral-700 gap-5 h-full w-full overflow-hidden items-center">
+      <button
+        onClick={handleScroll}
+        className="bg-slate-500 w-1/12 h-8 font-bold rounded-md hover:bg-slate-600"
+      >
+        To Bottom
+      </button>
+      <ul
+        className="flex flex-col h-full w-full overflow-y-auto gap-y-3 p-3"
+        ref={listRef}
+      >
         {messages.map((message) => (
-          <li key={message.id}>
-            <section>
-              <p>{message.text}</p>
-
-              {message.displayName ? <span>{message.displayName}</span> : null}
-              <br />
-              {message.createdAt?.seconds ? (
-                <span>
-                  {formatRelative(
-                    new Date(message.createdAt.seconds * 1000),
-                    new Date()
-                  )}
-                </span>
+          <li
+            key={message.id}
+            className={
+              message.uid === uid
+                ? "bg-blue-900 rounded-full rounded-bl-none py-3 px-7"
+                : "bg-neutral-800 rounded-full rounded-br-none italic py-3 px-7"
+            }
+          >
+            <section className="flex flex-col grow">
+              {message.displayName ? (
+                <span className="font-bold">{message.displayName}</span>
               ) : null}
+
+              <div className="flex mt-0.5">
+                <p className="grow text-base flex-wrap"> {message.text}</p>
+                {message.createdAt?.seconds ? (
+                  <span className="text-xs italic">
+                    {formatRelative(
+                      new Date(message.createdAt.seconds * 1000),
+                      new Date()
+                    )}
+                  </span>
+                ) : null}
+              </div>
             </section>
           </li>
         ))}
       </ul>
 
-      {/*Will be used to scroll new messages into view */}
-      <div ref={dummySpace}></div>
-
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-x-2 w-full bg-neutral-700 py-1 px-3"
+      >
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Message friends..."
+          className="w-11/12 px-2 rounded-lg text-black"
         />
-        <button type="submit" disabled={!newMessage}>
+        <button
+          type="submit"
+          disabled={!newMessage}
+          className={
+            newMessage
+              ? "grow py-0.5 bg-blue-600 hover:bg-blue-700"
+              : "grow py-0.5 bg-gray-400"
+          }
+        >
           Send
         </button>
       </form>
